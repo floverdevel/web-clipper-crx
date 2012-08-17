@@ -1,41 +1,59 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/**
+ * when the DOM is ready to be manipulated
+ */
+$(document).ready(function() {
+    $().crxwebclipper();
 
-var req = new XMLHttpRequest();
-req.open(
-    "GET",
-    "http://api.flickr.com/services/rest/?" +
-        "method=flickr.photos.search&" +
-        "api_key=90485e931f687a9b9c2a66bf58a3861a&" +
-        "text=your%20mom%20says%20hello%20world&" +
-        "safe_search=1&" +  // 1 is "safe"
-        "content_type=1&" +  // 1 is "photos only"
-        "sort=relevance&" +  // another good one is "interestingness-desc"
-        "per_page=20",
-    true);
-req.onload = showPhotos;
-req.send(null);
+    // Create a simple text notification:
+    //var notification = webkitNotifications.createNotification(
+    //    'ajax-loader.gif',  // icon url - can be relative
+    //    'Hello!',  // notification title
+    //    'Lorem ipsum...'  // notification body text
+    //);
+    // Or create an HTML notification:
+    /*
+    if ('undefined' == typeof notification) {
+        notification = webkitNotifications.createHTMLNotification(
+            'notification.html'  // html url - can be relative
+        );
+    }
+    // Then show the notification.
+    notification.show();
+    */
 
-function showPhotos() {
-  var photos = req.responseXML.getElementsByTagName("photo");
-  
-  chrome.browserAction.setBadgeText({'text': ''});
+    $('a.external').click(function() {
 
-  for (var i = 0, photo; photo = photos[i]; i++) {
-    var img = document.createElement("image");
-    img.src = constructImageURL(photo);
-    document.body.appendChild(img);
-    var badgeText = new Number(i + 1);
-    chrome.browserAction.setBadgeText({'text': badgeText.toString()});
-  }
-}
+        console.log(this);
+        console.log(this.href);
 
-// See: http://www.flickr.com/services/api/misc.urls.html
-function constructImageURL(photo) {
-  return "http://farm" + photo.getAttribute("farm") +
-      ".static.flickr.com/" + photo.getAttribute("server") +
-      "/" + photo.getAttribute("id") +
-      "_" + photo.getAttribute("secret") +
-      "_s.jpg";
-}
+        chrome.tabs.query({
+                'url' : this.href
+            },
+            function(tabCollection) {
+                $().crxwebclipper('log', tabCollection);
+            }
+        );
+        return false;
+
+        if ('undefined' != typeof(settings.tabs.option)) {
+            chrome.tabs.highlight({
+                'id': settings.tabs.option.getTab().id,
+                'windowId': settings.tabs.option.getTab().windowId
+            });
+        } else {
+            chrome.tabs.create({
+                'url': this.href,
+                'pinned': false
+            },
+            function(tab) {
+                settings.tabs.options = tab;
+
+                localStorage.setItem('.tabs.option', tab);
+                console.log(settings.tabs.options);
+            });
+        }
+
+        return false;
+    });
+});
+
