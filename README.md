@@ -1,4 +1,4 @@
-crx-web-clipper
+web-clipper-crx
 ===============
 
-CRX Web Clipper est une extension de Google Chrome qui permet de copier le contenu d'une page web dans le localStorage du browser et/ou dans votre compte en ligne.
+Web Clipper CRX est une extension de Google Chrome qui permet de copier le contenu d'une page web dans le localStorage du browser et/ou dans votre compte en ligne.
